@@ -14,13 +14,19 @@ public class AppLifecycleTracker implements Application.ActivityLifecycleCallbac
 
     private AppLifecycleListener mLifecycleListener = new AppLifecycleListener() {
         @Override
-        public void onMoveToForeground() {
-            FloatWindowManager.getInstance(MainApp.getInstance()).getFloatView().setVisibility(View.VISIBLE);
+        public void onMoveToForeground(Activity activity) {
+            View floatView = FloatWindowManager.getInstance(activity).getFloatView();
+            if (floatView != null) {
+                floatView.setVisibility(View.VISIBLE);
+            }
         }
 
         @Override
-        public void onMoveToBackground() {
-            FloatWindowManager.getInstance(MainApp.getInstance()).getFloatView().setVisibility(View.INVISIBLE);
+        public void onMoveToBackground(Activity activity) {
+            View floatView = FloatWindowManager.getInstance(activity).getFloatView();
+            if (floatView != null) {
+                floatView.setVisibility(View.INVISIBLE);
+            }
         }
     };
 
@@ -34,7 +40,7 @@ public class AppLifecycleTracker implements Application.ActivityLifecycleCallbac
     public void onActivityStarted(Activity activity) {
         if (numStarted == 0) {
             // app on foreground
-            mLifecycleListener.onMoveToForeground();
+            mLifecycleListener.onMoveToForeground(activity);
         }
         numStarted++;
     }
@@ -54,7 +60,7 @@ public class AppLifecycleTracker implements Application.ActivityLifecycleCallbac
         numStarted--;
         if (numStarted == 0) {
             // app on background
-            mLifecycleListener.onMoveToBackground();
+            mLifecycleListener.onMoveToBackground(activity);
         }
     }
 

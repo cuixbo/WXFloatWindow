@@ -7,7 +7,7 @@ import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
 public class WebActivity extends SwipeBackActivity {
 
-    FloatWindowManager mFloatWindowManager = FloatWindowManager.getInstance(this);
+    FloatWindowManager mFloatWindowManager;
     FloatAddView mFloatAddView;
     float downX = 0;
     float downY = 0;
@@ -21,6 +21,8 @@ public class WebActivity extends SwipeBackActivity {
         setContentView(R.layout.activity_web);
         getSwipeBackLayout().setEdgeSize(edgeSize);
 //        getSwipeBackLayout().setScrollThresHold(0.5F);
+        mFloatWindowManager = FloatWindowManager.getInstance(this);
+        mFloatWindowManager.init(this);
         mFloatAddView = mFloatWindowManager.getFloatAddView();
     }
 
@@ -39,7 +41,7 @@ public class WebActivity extends SwipeBackActivity {
         switch (event.getAction()) {
             case MotionEvent.ACTION_MOVE:
                 mFloatAddView.setFraction(event.getX() * 2 / width);
-                boolean isInCancel = mFloatWindowManager.isInCircle(event.getX(), event.getY(), mFloatAddView.getRadius());
+                boolean isInCancel = Util.isInCircle(event.getX(), event.getY(), mFloatAddView.getRadius());
                 if (isInCancel && !isLastInCancel) {
                     Util.performVibrate(this);//模拟震动
                 }
@@ -48,7 +50,7 @@ public class WebActivity extends SwipeBackActivity {
                 break;
             case MotionEvent.ACTION_UP:
                 mFloatAddView.setFraction(0);
-                if (mFloatWindowManager.isInCircle(event.getX(), event.getY(), mFloatAddView.getRadius())) {
+                if (Util.isInCircle(event.getX(), event.getY(), mFloatAddView.getRadius())) {
                     mFloatWindowManager.showFloatView(true);
                 }
                 break;

@@ -1,7 +1,5 @@
 package learn.cxb.com.floatwindow;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
@@ -19,7 +17,7 @@ public class FloatCancelView extends FrameLayout {
     private Context mContext;
 
     private QuadrantView mQuadrantView;
-    private QuadrantView mQuadrantView2;
+    private QuadrantView mQuadrantViewExpand;
 
     private View cancel;
 
@@ -36,14 +34,16 @@ public class FloatCancelView extends FrameLayout {
     private void init(Context context) {
         mContext = context;
         View.inflate(context, R.layout.layout_float_cancel, this);
-        mQuadrantView = findViewById(R.id.qv_1);
-        mQuadrantView2 = findViewById(R.id.qv_2);
+        mQuadrantView = findViewById(R.id.quadrant_view);
+        mQuadrantViewExpand = findViewById(R.id.quadrant_view_expand);
+
         mQuadrantView.setColor(red);
-        mQuadrantView2.setColor(red);
+        mQuadrantViewExpand.setColor(red);
         cancel = findViewById(R.id.cancel);
 
-        setExpand(false);
-        setVisibility(INVISIBLE);
+        setExpand(false);//默认不显示扩展
+        setTranslationX(Integer.MAX_VALUE);// 默认不显示在屏幕中
+        setTranslationY(Integer.MAX_VALUE);
     }
 
     public int getRadius() {
@@ -51,48 +51,19 @@ public class FloatCancelView extends FrameLayout {
     }
 
     public void startAnim() {
-        setVisibility(VISIBLE);
-        cancel.setTranslationX(getRadius());
-        cancel.setTranslationY(getRadius());
-        mQuadrantView.setTranslationX(getRadius());
-        mQuadrantView.setTranslationY(getRadius());
-
-        cancel.animate().translationX(0).start();
-        cancel.animate().translationY(0).start();
-        mQuadrantView.animate().translationX(0).start();
-        mQuadrantView.animate().translationY(0).start();
-
-        mQuadrantView.animate().setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                setVisibility(VISIBLE);
-            }
-        });
+        setTranslationX(getRadius());
+        setTranslationY(getRadius());
+        animate().translationX(0).start();
+        animate().translationY(0).start();
     }
 
     public void startAnimReverse() {
-        setVisibility(VISIBLE);
-        cancel.animate().translationX(getRadius()).start();
-        cancel.animate().translationY(getRadius()).start();
-        mQuadrantView.animate().translationX(getRadius()).start();
-        mQuadrantView.animate().translationY(getRadius()).start();
-
-        mQuadrantView.animate().setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                setVisibility(INVISIBLE);
-            }
-        });
-    }
-
-    public void setFraction(float fraction) {
-        postInvalidate();
+        animate().translationX(getRadius()).start();
+        animate().translationY(getRadius()).start();
     }
 
     public void setExpand(boolean expand) {
-        mQuadrantView2.setVisibility(expand ? VISIBLE : INVISIBLE);
+        mQuadrantViewExpand.setVisibility(expand ? VISIBLE : INVISIBLE);
     }
 
 

@@ -2,19 +2,19 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rl_float"
+    android:id="@+id/rl_float_add"
     android:layout_width="136dp"
     android:layout_height="136dp"
     tools:ignore="RtlHardcoded">
 
     <learn.cxb.com.floatwindow.QuadrantView
-        android:id="@+id/qv_1"
+        android:id="@+id/quadrant_view"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_gravity="right|bottom" />
 
     <learn.cxb.com.floatwindow.QuadrantView
-        android:id="@+id/qv_2"
+        android:id="@+id/quadrant_view_expand"
         android:layout_width="136dp"
         android:layout_height="136dp"
         android:layout_gravity="right|bottom"

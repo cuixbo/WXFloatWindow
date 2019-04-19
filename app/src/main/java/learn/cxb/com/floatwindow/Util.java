@@ -2,6 +2,7 @@ package learn.cxb.com.floatwindow;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -11,6 +12,7 @@ import android.os.Build;
 import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.annotation.DrawableRes;
+import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
@@ -57,6 +59,7 @@ public class Util {
         return true;
     }
 
+
     /**
      * 跳转去设置权限
      */
@@ -66,6 +69,18 @@ public class Util {
             intent.setData(Uri.parse("package:" + context.getPackageName()));
             ((Activity) context).startActivityForResult(intent, 1001);
         }
+    }
+
+    public static void showFloatWindowPermissionDialog(final Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("浮窗权限未获取")
+                .setMessage("你的手机没有授权app获得浮窗权限，网页浮窗不能正常使用")
+                .setPositiveButton("去开启", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        applyPermission(context);
+                    }
+                }).show();
     }
 
     /**
@@ -85,5 +100,21 @@ public class Util {
         options.inJustDecodeBounds = false;
         return BitmapFactory.decodeResource(resources, resId, options);
     }
+
+    /**
+     * 判断坐标是否在1/4圆内
+     *
+     * @param x      屏幕坐标
+     * @param y      屏幕坐标
+     * @param radius 1/4圆的半径
+     * @return
+     */
+    public static boolean isInCircle(float x, float y, int radius) {
+        int centerX = Util.getDisplayWidth();//1/4圆的圆心
+        int centerY = Util.getDisplayHeight();
+        int distance = (int) Math.sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY));
+        return distance <= radius;
+    }
+
 
 }

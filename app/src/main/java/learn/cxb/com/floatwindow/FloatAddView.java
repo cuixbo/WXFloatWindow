@@ -15,7 +15,7 @@ public class FloatAddView extends FrameLayout {
 
     private Context mContext;
     private QuadrantView mQuadrantView;
-    private QuadrantView mQuadrantView2;
+    private QuadrantView mQuadrantViewExpand;
     private View cancel;
 
     public FloatAddView(Context context) {
@@ -31,14 +31,15 @@ public class FloatAddView extends FrameLayout {
     private void init(Context context) {
         mContext = context;
         View.inflate(context, R.layout.layout_float_add, this);
-        mQuadrantView = findViewById(R.id.qv_1);
-        mQuadrantView2 = findViewById(R.id.qv_2);
+        mQuadrantView = findViewById(R.id.quadrant_view);
+        mQuadrantViewExpand = findViewById(R.id.quadrant_view_expand);
         mQuadrantView.setColor(gray);
-        mQuadrantView2.setColor(gray);
+        mQuadrantViewExpand.setColor(gray);
         cancel = findViewById(R.id.cancel);
 
-        setExpand(false);
-        setVisibility(INVISIBLE);
+        setExpand(false);//默认不显示扩展
+        setTranslationX(Integer.MAX_VALUE);// 默认不显示在屏幕中
+        setTranslationY(Integer.MAX_VALUE);
     }
 
     public int getRadius() {
@@ -47,15 +48,14 @@ public class FloatAddView extends FrameLayout {
 
     public void setFraction(float fraction) {
         float dis = getRadius() * (1 - Math.min(1, fraction));
-        cancel.setTranslationX(dis);
-        cancel.setTranslationY(dis);
-        mQuadrantView.setTranslationX(dis);
-        mQuadrantView.setTranslationY(dis);
-
-        setVisibility(fraction > 0 ? VISIBLE : INVISIBLE);
+        setTranslationX(dis);
+        setTranslationY(dis);
     }
 
+    /**
+     * 是否显示扩展的圆形
+     */
     public void setExpand(boolean expand) {
-        mQuadrantView2.setVisibility(expand ? VISIBLE : INVISIBLE);
+        mQuadrantViewExpand.setVisibility(expand ? VISIBLE : INVISIBLE);
     }
 }

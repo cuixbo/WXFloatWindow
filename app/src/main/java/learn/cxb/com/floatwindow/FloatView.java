@@ -29,4 +29,5 @@ public class FloatView extends RelativeLayout {
         View.inflate(context, R.layout.layout_float, this);
         mIvFloat = findViewById(R.id.iv_float);
     }
+
 }

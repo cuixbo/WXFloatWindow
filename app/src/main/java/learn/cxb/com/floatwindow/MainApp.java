@@ -4,7 +4,7 @@ import android.app.Application;
 
 public class MainApp extends Application {
     private static MainApp INSTANCE;
-    AppLifecycleTracker mAppLifecycleTracker = new AppLifecycleTracker();;
+    AppLifecycleTracker mAppLifecycleTracker = new AppLifecycleTracker();
 
     public static MainApp getInstance() {
         return INSTANCE;
