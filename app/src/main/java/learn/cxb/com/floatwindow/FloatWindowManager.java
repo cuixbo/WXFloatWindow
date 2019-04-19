@@ -3,7 +3,6 @@ package learn.cxb.com.floatwindow;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -27,9 +26,11 @@ public class FloatWindowManager {
 
     private WindowManager mWindowManager;
     private FloatView mFloatView;
-    private CancelView mCancelView;
+    private FloatAddView mFloatAddView;
+    private FloatCancelView mFloatCancelView;
     private WindowManager.LayoutParams mFloatParams;
-    private WindowManager.LayoutParams mCancelParams;
+    private WindowManager.LayoutParams mFloatAddParams;
+    private WindowManager.LayoutParams mFloatCancelParams;
 
     private FloatWindowManager(Context context) {
         mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -38,9 +39,13 @@ public class FloatWindowManager {
 
     public void init(Context context) {
         initCancelView(context);
+        initAddView(context);
         initFloatView(context);
     }
 
+    /**
+     * 初始化圆形悬浮图片View
+     */
     public void initFloatView(Context context) {
         if (!Util.checkFloatWindowPermission(context)) {
             Util.applyPermission(context);
@@ -59,30 +64,53 @@ public class FloatWindowManager {
         mFloatParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
         mFloatParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         mFloatParams.x = Util.dip2px(16);
-        mFloatParams.y = Util.dip2px(16);
+        mFloatParams.y = Util.dip2px(60);
         mWindowManager.addView(mFloatView, mFloatParams);
         mFloatView.setVisibility(View.GONE);
         initFloatViewTouchListener(context);
     }
 
-    public void initCancelView(Context context) {
-        mCancelView = new CancelView(context);
-        mCancelParams = new WindowManager.LayoutParams();
+    /**
+     * 初始化，右下角 "添加" 悬浮窗的1/4圆形View，灰色
+     */
+    public void initAddView(Context context) {
+        mFloatAddView = new FloatAddView(context);
+        mFloatAddParams = new WindowManager.LayoutParams();
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            mCancelParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+            mFloatAddParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         } else {
-            mCancelParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+            mFloatAddParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
         }
-        mCancelParams.format = PixelFormat.RGBA_8888;
-        mCancelParams.gravity = Gravity.END | Gravity.BOTTOM;
-        mCancelParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        mCancelParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        mCancelParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
-        mCancelParams.x = 0;
-        mCancelParams.y = 0;
-        mWindowManager.addView(mCancelView, mCancelParams);
+        mFloatAddParams.format = PixelFormat.RGBA_8888;
+        mFloatAddParams.gravity = Gravity.END | Gravity.BOTTOM;
+        mFloatAddParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        mFloatAddParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        mFloatAddParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
+        mWindowManager.addView(mFloatAddView, mFloatAddParams);
     }
 
+    /**
+     * 初始化，右下角 "取消添加" 悬浮窗的1/4圆形View，红色
+     */
+    public void initCancelView(Context context) {
+        mFloatCancelView = new FloatCancelView(context);
+        mFloatCancelParams = new WindowManager.LayoutParams();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            mFloatCancelParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        } else {
+            mFloatCancelParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+        }
+        mFloatCancelParams.format = PixelFormat.RGBA_8888;
+        mFloatCancelParams.gravity = Gravity.END | Gravity.BOTTOM;
+        mFloatCancelParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        mFloatCancelParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        mFloatCancelParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
+        mWindowManager.addView(mFloatCancelView, mFloatCancelParams);
+    }
+
+    /**
+     * 图片悬浮窗的touch事件
+     */
     @SuppressLint("ClickableViewAccessibility")
     private void initFloatViewTouchListener(final Context context) {
         final int statusBarHeight = Util.getStatusBarHeight(context);
@@ -103,25 +131,23 @@ public class FloatWindowManager {
                         downY = event.getY();
                         originX = mFloatParams.x;
                         originY = mFloatParams.y;
-                        mCancelView.setCancelColor(Color.RED);
-                        mCancelView.setCancelText("取消浮窗");
-                        mCancelView.startAnim();
+                        mFloatCancelView.startAnim();
                         break;
                     case MotionEvent.ACTION_MOVE:
                         mFloatParams.x = (int) (event.getRawX() - downX);//getRawX相对于屏幕左上角坐标x
                         mFloatParams.y = (int) (event.getRawY() - downY - statusBarHeight);
                         mWindowManager.updateViewLayout(mFloatView, mFloatParams);
-
-                        boolean isInCancel = isInCancel((int) event.getRawX(), (int) event.getRawY());
-                        if (isInCancel&&!isLastInCancel) {
+                        boolean isInCancel = isInCircle(event.getRawX(), event.getRawY(), mFloatCancelView.getRadius());
+                        if (isInCancel && !isLastInCancel) {
                             Util.performVibrate(context);//模拟震动
                         }
-                        isLastInCancel=isInCancel;
+                        mFloatCancelView.setExpand(isInCancel);
+                        isLastInCancel = isInCancel;
                         break;
                     case MotionEvent.ACTION_UP:
                         firstEntered = false;
-                        mCancelView.startAnimReverse();
-                        if (isInCancel((int) event.getRawX(), (int) event.getRawY())) {
+                        mFloatCancelView.startAnimReverse();
+                        if (isInCircle(event.getRawX(), event.getRawY(), mFloatCancelView.getRadius())) {
                             mFloatView.setVisibility(View.INVISIBLE);
                             mFloatParams.x = originX;
                             mFloatParams.y = originY;
@@ -152,14 +178,20 @@ public class FloatWindowManager {
     }
 
     /**
-     * 判断坐标是否在cancelView内
+     * 判断坐标是否在1/4圆内
+     *
+     * @param x      屏幕坐标
+     * @param y      屏幕坐标
+     * @param radius 1/4圆的半径
+     * @return
      */
-    public boolean isInCancel(float x, float y) {
-        int mCancelX = Util.getDisplayWidth();
-        int mCancelY = Util.getDisplayHeight();
-        int distance = (int) Math.sqrt((x - mCancelX) * (x - mCancelX) + (y - mCancelY) * (y - mCancelY));
-        return distance <= 2 * mCancelView.getRadius();
+    public boolean isInCircle(float x, float y, int radius) {
+        int centerX = Util.getDisplayWidth();//1/4圆的圆心
+        int centerY = Util.getDisplayHeight();
+        int distance = (int) Math.sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY));
+        return distance <= radius;
     }
+
 
     public void showFloatView(boolean show) {
         mWindowManager.updateViewLayout(mFloatView, mFloatParams);
@@ -170,8 +202,12 @@ public class FloatWindowManager {
         return mFloatView;
     }
 
-    public CancelView getCancelView() {
-        return mCancelView;
+    public FloatCancelView getFloatCancelView() {
+        return mFloatCancelView;
+    }
+
+    public FloatAddView getFloatAddView() {
+        return mFloatAddView;
     }
 
 }

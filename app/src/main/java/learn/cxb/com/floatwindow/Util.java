@@ -47,6 +47,9 @@ public class Util {
         return Resources.getSystem().getDisplayMetrics().heightPixels;
     }
 
+    /**
+     * 检查是否有悬浮窗权限
+     */
     public static boolean checkFloatWindowPermission(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return Settings.canDrawOverlays(context);
@@ -54,6 +57,9 @@ public class Util {
         return true;
     }
 
+    /**
+     * 跳转去设置权限
+     */
     public static void applyPermission(Context context) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
@@ -68,7 +74,7 @@ public class Util {
     public static void performVibrate(Context context) {
         Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         if (vibrator.hasVibrator()) {
-            vibrator.vibrate(10);
+            vibrator.vibrate(20);
         }
     }
 

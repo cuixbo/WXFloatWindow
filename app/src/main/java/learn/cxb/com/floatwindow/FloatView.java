@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 /**
- * 悬浮View
+ * 悬浮图片View
  */
 public class FloatView extends RelativeLayout {
 
