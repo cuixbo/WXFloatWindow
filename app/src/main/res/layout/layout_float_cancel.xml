@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_float"
+    android:layout_width="176dp"
+    android:layout_height="176dp"
+    tools:ignore="RtlHardcoded">
+
+    <learn.cxb.com.floatwindow.QuadrantView
+        android:id="@+id/qv_1"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_gravity="right|bottom" />
+
+    <learn.cxb.com.floatwindow.QuadrantView
+        android:id="@+id/qv_2"
+        android:layout_width="176dp"
+        android:layout_height="176dp"
+        android:layout_gravity="right|bottom"
+        android:alpha="0.5" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/cancel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="right|bottom">
+
+        <ImageView
+            android:id="@+id/iv_circle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="50dp"
+            android:layout_marginBottom="50dp"
+            android:src="@mipmap/icon_cancel_circle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_float"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/iv_circle"
+            android:layout_marginTop="8dp"
+            android:text="取消浮窗"
+            android:textAlignment="center"
+            android:textColor="#fff"
+            android:textSize="12sp"
+            app:layout_constraintLeft_toLeftOf="@+id/iv_circle"
+            app:layout_constraintRight_toRightOf="@+id/iv_circle"
+            app:layout_constraintTop_toBottomOf="@+id/iv_circle" />
+    </android.support.constraint.ConstraintLayout>
+</FrameLayout>
+
