@@ -15,6 +15,7 @@ import android.support.annotation.DrawableRes;
 import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.widget.Toast;
 
 public class Util {
 
@@ -59,15 +60,18 @@ public class Util {
         return true;
     }
 
-
     /**
      * 跳转去设置权限
      */
-    public static void applyPermission(Context context) {
+    public static void applyFloatWindowPermission(Context context) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
             intent.setData(Uri.parse("package:" + context.getPackageName()));
-            ((Activity) context).startActivityForResult(intent, 1001);
+            if (context instanceof Activity) {
+                ((Activity) context).startActivityForResult(intent, 1001);
+            } else {
+                context.startActivity(intent);
+            }
         }
     }
 
@@ -78,7 +82,7 @@ public class Util {
                 .setPositiveButton("去开启", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        applyPermission(context);
+                        applyFloatWindowPermission(context);
                     }
                 }).show();
     }
@@ -116,5 +120,8 @@ public class Util {
         return distance <= radius;
     }
 
+    public static void showToast(Context context,String toast){
+        Toast.makeText(context,toast,Toast.LENGTH_SHORT).show();
+    }
 
 }
