@@ -34,7 +34,6 @@ public class FloatWindowManager {
 
     private FloatWindowManager(Context context) {
         mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-//        init(context);
     }
 
     public void init(Context context) {
@@ -172,7 +171,6 @@ public class FloatWindowManager {
                             getAnimator().setIntValues(mFloatParams.x, finalX);
                             getAnimator().setDuration(300 * Math.abs(mFloatParams.x - finalX) / (width / 2));
                             getAnimator().start();
-
                         }
                         break;
                 }
@@ -206,7 +204,7 @@ public class FloatWindowManager {
         mFloatView.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
     }
 
-    public View getFloatView() {
+    public FloatView getFloatView() {
         return mFloatView;
     }
 

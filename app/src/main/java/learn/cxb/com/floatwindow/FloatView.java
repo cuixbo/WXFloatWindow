@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.bumptech.glide.Glide;
+
 /**
  * 悬浮图片View
  */
@@ -28,6 +30,10 @@ public class FloatView extends RelativeLayout {
         mContext = context;
         View.inflate(context, R.layout.layout_float, this);
         mIvFloat = findViewById(R.id.iv_float);
+    }
+
+    public void setImageUrl(String url) {
+        Glide.with(MainApp.getInstance()).load(url).into(mIvFloat);
     }
 
 }
